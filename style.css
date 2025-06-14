@@ -1,0 +1,347 @@
+body {
+  font-family: 'Segoe UI', 'Meiryo', sans-serif;
+  background: #f5f7fa;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem 1rem 5rem 1rem;
+  box-sizing: border-box;
+}
+
+.question {
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+  font-weight: bold;
+  word-break: break-word;
+  background: #fff;
+  border: 2px solid #6ea8fe;
+  border-radius: 10px;
+  padding: 1.2rem 1rem;
+  box-shadow: 0 2px 8px rgba(110,168,254,0.07);
+  transition: border-color 0.3s;
+}
+
+.choices {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  width: 100%;
+  margin-bottom: 1rem;
+}
+
+@media (max-width: 600px) {
+  .main-content {
+    padding: 1rem 0.5rem 6rem 0.5rem;
+    max-width: 100vw;
+  }
+  .question {
+    font-size: 1rem;
+  }
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+/* PC表示時に左右の余白を広げる調整 */
+@media (min-width: 900px) {
+  .main-content {
+    max-width: 1000px;
+    padding-left: 6vw;
+    padding-right: 6vw;
+    padding-top: 2.5rem;
+    padding-bottom: 6rem;
+  }
+  .question {
+    padding-left: 3vw;
+    padding-right: 3vw;
+    margin-bottom: 2.5rem;
+    font-size: 1.2rem;
+  }
+  .blank-select {
+    gap: 1.2em 1.2em;
+    margin-bottom: 2em;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .blank-select .choice-btn {
+    font-size: 1.15rem;
+    min-width: 120px;
+    padding: 1.1em 0.5em;
+  }
+  #answerBtn {
+    width: 340px;
+    font-size: 1.25rem;
+    padding: 1.1rem 2.5rem;
+  }
+  #nextBtn {
+    max-width: 400px;
+    font-size: 1.15rem;
+    padding: 1rem 2rem;
+  }
+  .choices {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.2em;
+  }
+  #result {
+    font-size: 1.15rem;
+    padding: 1.5em 2em;
+  }
+}
+
+.choice-btn {
+  background: #e3eafc;
+  border: none;
+  border-radius: 8px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  width: 100%;
+  box-sizing: border-box;
+}
+.choice-btn:hover, .choice-btn.selected {
+  background: #b6d0fe;
+}
+/* 正解・不正解アニメーション */
+@keyframes correct-flash {
+  0%   { box-shadow: 0 0 0 0 #4be37a77; }
+  60%  { box-shadow: 0 0 16px 8px #4be37a77; }
+  100% { box-shadow: 0 0 0 0 #4be37a00; }
+}
+@keyframes incorrect-shake {
+  0% { transform: translateX(0); }
+  20% { transform: translateX(-10px); }
+  40% { transform: translateX(10px); }
+  60% { transform: translateX(-8px); }
+  80% { transform: translateX(8px); }
+  100% { transform: translateX(0); }
+}
+
+.result.correct {
+  background: #e6f9e6;
+  color: #218838;
+  border: 1px solid #4be37a;
+  animation: correct-flash 0.5s;
+}
+.result.incorrect {
+  background: #fff0f0;
+  color: #c82333;
+  border: 1px solid #f5c6cb;
+  animation: incorrect-shake 0.4s;
+}
+#nextBtn {
+  margin-top: 1.5rem;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background: #6ea8fe;
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+#nextBtn:hover {
+  background: #4682e6;
+}
+
+/* ステータスバー */
+.status-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  background: #222c3a;
+  color: #fff;
+  font-size: 1rem;
+  padding: 0.7rem 1rem;
+  box-sizing: border-box;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  letter-spacing: 0.02em;
+}
+@media (max-width: 600px) {
+  .status-bar {
+    font-size: 0.95rem;
+    padding: 0.7rem 0.5rem;
+    gap: 1rem;
+  }
+}
+
+
+
+
+#judgeOverlay {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  background: rgba(255,255,255,0.85);
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  font-size: 3rem;
+  font-weight: bold;
+  text-align: center;
+  pointer-events: none;
+  animation: none;
+}
+
+#judgeOverlay.show {
+  display: flex;
+  animation: fadeout 1s 0.7s forwards;
+}
+
+#judgeOverlay.correct {
+  color: #23b04b;
+}
+
+#judgeOverlay.incorrect {
+  color: #e23c3c;
+}
+
+#judgeOverlay .icon {
+  font-size: 5rem;
+  display: block;
+  margin-bottom: 0.5em;
+}
+
+@keyframes fadeout {
+  to {
+    opacity: 0;
+    display: none;
+  }
+}
+
+
+/* 問題文・選択肢内の画像サイズを自動調整 */
+.question img,
+.choice-btn img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.5em auto;
+  object-fit: contain;
+}
+
+/* 空欄選択UI用 */
+.blank-select {
+  margin-bottom: 1.2em;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5em 0.5em;
+  align-items: stretch;
+}
+.blank-select > span {
+  grid-column: 1 / -1;
+  margin-bottom: 0.3em;
+  font-weight: bold;
+  display: block;
+}
+.blank-select .choice-btn {
+  min-width: 90px;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+#blanksArea {
+  margin-bottom: 1.5em;
+}
+#answerBtnArea {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70px;
+  margin-bottom: 1.5em;
+}
+#answerBtn {
+  width: 260px;
+  max-width: 90vw;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  background: #6ea8fe;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+  padding: 0.9rem 2.5rem;
+  text-align: center;
+  display: block;
+}
+#answerBtn:disabled {
+  background: #b5c9e6;
+  cursor: not-allowed;
+}
+
+
+#importCsvBtn {
+  background: #6ea8fe;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+  margin-left: 0.5em;
+}
+#importCsvBtn:hover {
+  background: #4682e6;
+}
+
+
+.judge-mark {
+  font-size: 1.3em;
+  vertical-align: middle;
+  font-weight: bold;
+  margin-left: 0.7em;
+}
+
+
+/* ZIPインポートUI用 */
+.zip-import-area {
+  margin: 1.5em 0 1em 0;
+  text-align: center;
+}
+#zipQuizUploadBtn {
+  background: #6ea8fe;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.7rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#zipQuizUploadBtn:hover {
+  background: #4682e6;
+}
+#zipQuizMsg {
+  margin-left: 1em;
+  color: #4682e6;
+  font-size: 1em;
+}

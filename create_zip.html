@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>問題ZIP作成ツール</title>
+  <link rel="stylesheet" href="create_zip.css">
+</head>
+<body>
+  <header>
+    <h1>問題ZIP作成ツール</h1>
+    <p>Excel風UIで問題CSV＋画像をまとめてZIP化できます</p>
+  </header>
+  <main>
+    <div class="table-controls">
+    <div class="row-controls">
+        <button id="addRowBtn">行を追加</button>
+        <button id="delRowBtn">行を削除</button>
+    </div>
+    <div class="choice-controls">
+        <button id="addChoiceBtn">選択肢を追加</button>
+        <button id="delChoiceBtn">選択肢を削除</button>
+    </div>
+    <div class="img-controls">
+        <input type="file" id="imgInput" accept="image/*" multiple style="display:none;">
+        <button id="imgUploadBtn">画像を追加</button>
+    </div>
+    <div class="zip-controls">
+        <input type="file" id="zipInput" accept=".zip" style="display:none;">
+        <button id="zipUploadBtn">既存ZIPを読み込む</button>
+    </div>
+    </div>
+    <div class="excel-table-wrapper">
+      <table id="quizTable">
+        <thead>
+          <tr>
+            <th>カテゴリ</th>
+            <th>問題文</th>
+            <th>問題画像</th>
+            <th>選択肢0</th>
+            <th>選択肢1</th>
+            <th>解答配列</th>
+            <th>解説</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true" class="img-cell"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+            <td contenteditable="true"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="img-list-area">
+      <h3>追加画像一覧</h3>
+      <div id="imgList"></div>
+    </div>
+    <div class="export-area">
+      <button id="exportZipBtn">ZIPファイルを作成してダウンロード</button>
+      <span id="exportMsg"></span>
+    </div>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="create_zip.js"></script>
+</body>
+</html>

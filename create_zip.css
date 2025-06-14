@@ -1,0 +1,125 @@
+body {
+  font-family: 'Segoe UI', 'Meiryo', sans-serif;
+  background: #f6f8fa;
+  margin: 0;
+  padding: 0;
+}
+header {
+  background: #4682e6;
+  color: #fff;
+  padding: 1.2em 1em 1em 1em;
+  text-align: center;
+}
+main {
+  max-width: 98vw;
+  margin: 2em auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px rgba(70,130,230,0.08);
+  padding: 2em 2em 2em 2em;
+}
+.table-controls {
+  margin-bottom: 1em;
+  display: flex;
+  gap: 0.7em;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.table-controls button {
+  background: #6ea8fe;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.5em 1.1em;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.table-controls button:hover {
+  background: #4682e6;
+}
+.excel-table-wrapper {
+  overflow-x: auto;
+  margin-bottom: 1.5em;
+  width: 100%;
+}
+#quizTable {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 900px;
+  background: #fafdff;
+  table-layout: auto; /* ←fixedからautoに変更 */
+}
+#quizTable th, #quizTable td {
+  border: 1px solid #b5c9e6;
+  padding: 0.5em 0.7em;
+  min-width: 120px;
+  text-align: left;
+  word-break: break-all;
+}
+#quizTable th {
+  background: #eaf2fb;
+  font-weight: bold;
+}
+#quizTable td[contenteditable="true"] {
+  background: #fff;
+  outline: none;
+  transition: background 0.2s;
+}
+#quizTable td[contenteditable="true"]:focus {
+  background: #e6f0ff;
+}
+#quizTable td.img-cell.invalid {
+  background: #ffeaea !important;
+  color: #e23c3c !important;
+}
+.img-list-area {
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+#imgList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1em;
+}
+.img-thumb {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid #b5c9e6;
+  border-radius: 6px;
+  padding: 0.5em;
+  background: #fafdff;
+  width: 110px;
+}
+.img-thumb img {
+  max-width: 90px;
+  max-height: 70px;
+  margin-bottom: 0.3em;
+}
+.img-thumb span {
+  font-size: 0.85em;
+  word-break: break-all;
+}
+.export-area {
+  margin-top: 2em;
+  text-align: center;
+}
+#exportZipBtn {
+  background: #23b04b;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 0.9em 2em;
+  font-size: 1.1em;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+#exportZipBtn:hover {
+  background: #188a36;
+}
+#exportMsg {
+  margin-left: 1em;
+  color: #4682e6;
+  font-size: 1em;
+}
