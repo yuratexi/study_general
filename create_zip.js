@@ -173,40 +173,54 @@ function csv_import(){
   input.click();
 };
 
-// CSV1行を安全に分割
-function parseCsvLine(line) {
-  const cells = [];
+// CSV1行を安全に分割（ダブルクォーテーション内の改行・カンマも対応）
+function parseCsv(csvText) {
+  const rows = [];
+  let row = [];
   let cell = '';
   let inQuote = false;
-  for (let i = 0; i < line.length; i++) {
-    const c = line[i];
+  let i = 0;
+  while (i < csvText.length) {
+    const c = csvText[i];
     if (c === '"') {
-      if (inQuote && line[i + 1] === '"') {
+      if (inQuote && csvText[i + 1] === '"') {
         cell += '"';
         i++;
       } else {
         inQuote = !inQuote;
       }
     } else if (c === ',' && !inQuote) {
-      cells.push(cell);
+      row.push(cell);
+      cell = '';
+    } else if ((c === '\n' || c === '\r') && !inQuote) {
+      // 行末
+      if (c === '\r' && csvText[i + 1] === '\n') i++; // CRLF対応
+      row.push(cell);
+      rows.push(row);
+      row = [];
       cell = '';
     } else {
       cell += c;
     }
+    i++;
   }
-  cells.push(cell);
-  return cells;
+  // 最後のセル
+  if (cell.length > 0 || row.length > 0) {
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows;
 }
 
 // テーブル末尾にCSVデータを追加（選択肢列数を自動調整）
 function appendCsvToTable(csvText) {
-  const rows = csvText.split(/\r?\n/).filter(line => line.trim());
+  const rows = parseCsv(csvText).filter(line => line.some(cell => cell.trim() !== ''));
   if (rows.length < 2) return;
   const tbody = document.querySelector('#quizTable tbody');
   const theadTr = document.querySelector('#quizTable thead tr');
 
   // 追加するCSVの選択肢列数を取得
-  const csvHeaders = parseCsvLine(rows[0]);
+  const csvHeaders = rows[0];
   let csvChoiceStart = 3;
   let csvChoiceEnd = csvChoiceStart;
   while (csvHeaders[csvChoiceEnd] && csvHeaders[csvChoiceEnd].startsWith('選択肢')) {
@@ -245,7 +259,7 @@ function appendCsvToTable(csvText) {
 
   // データ行追加
   for (let i = 1; i < rows.length; i++) {
-    const cells = parseCsvLine(rows[i]);
+    const cells = rows[i];
     if (cells.length === 0 || cells.every(c => c === '')) continue;
     // 選択肢列が足りない場合は空セルで埋める
     cells.length = headerLen;
