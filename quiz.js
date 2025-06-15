@@ -387,6 +387,44 @@ function loadQuizListFromLocalStorage() {
   }
 }
 
+// ダブルクォーテーション対応のCSVパース関数
+function parseCsv(csvText) {
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuote = false;
+  let i = 0;
+  while (i < csvText.length) {
+    const c = csvText[i];
+    if (c === '"') {
+      if (inQuote && csvText[i + 1] === '"') {
+        cell += '"';
+        i++;
+      } else {
+        inQuote = !inQuote;
+      }
+    } else if (c === ',' && !inQuote) {
+      row.push(cell);
+      cell = '';
+    } else if ((c === '\n' || c === '\r') && !inQuote) {
+      if (c === '\r' && csvText[i + 1] === '\n') i++; // CRLF対応
+      row.push(cell);
+      rows.push(row);
+      row = [];
+      cell = '';
+    } else {
+      cell += c;
+    }
+    i++;
+  }
+  // 最後のセル
+  if (cell.length > 0 || row.length > 0) {
+    row.push(cell);
+    rows.push(row);
+  }
+  return rows;
+}
+
 
 function showSettings(page = 1) {
   document.querySelector('.main-content').style.display = 'none';
@@ -494,11 +532,41 @@ function showSettings(page = 1) {
           return;
         }
         const csvText = await csvFile.async('string');
-        const quizzes = parseQuizCsv(csvText);
-        if (!quizzes.length) {
+        // ここでダブルクォーテーション対応のパースを使う
+        const rows = parseCsv(csvText).filter(line => line.some(cell => cell.trim() !== ''));
+        if (rows.length < 2) {
           zipImportMsg.textContent = "quiz.csvの内容が不正です。";
           zipImportMsg.style.color = "#e23c3c";
           return;
+        }
+        // 1行目はヘッダー
+        const quizzes = [];
+        const headers = rows[0];
+        for (let i = 1; i < rows.length; i++) {
+          const cells = rows[i];
+          if (cells.length < 9) continue;
+          const category = cells[0].trim();
+          const question = cells[1].trim();
+          const image = cells[2].trim();
+          let answerIdx = cells.findIndex((c, idx) => idx > 2 && c.trim().startsWith('['));
+          if (answerIdx === -1) continue;
+          const choices = cells.slice(3, answerIdx).map(c => c.trim()).filter(c => c !== "");
+          let answer;
+          try {
+            answer = JSON.parse(cells[answerIdx]);
+          } catch {
+            answer = [];
+          }
+          const explanation = cells.slice(answerIdx + 1).join(',').trim();
+          quizzes.push({
+            category,
+            question,
+            image,
+            blanks: Array.isArray(answer) ? answer.length : 1,
+            choices,
+            answer,
+            explanation
+          });
         }
 
         // 画像ファイルをBlob URL化して、選択肢や問題文・解説に反映
@@ -515,7 +583,6 @@ function showSettings(page = 1) {
         // quizzesの各問題のimageをBlob URLに置換
         quizzes.forEach(q => {
           if (q.image) {
-            // 画像ファイル名だけの場合もimg/付きの場合も対応
             let imgName = q.image.trim().replace(/^img\//, '');
             if (imageBlobs[imgName]) {
               q.image = imageBlobs[imgName];
@@ -560,8 +627,6 @@ function showSettings(page = 1) {
         //データの保存
         await saveToIndexedDB(quizzes, imageBlobs);
 
-        // デバッグ：ここでquizzesのimageがBlob URLになっているか確認
-        //console.log('quizzes after blob url replace:', quizzes);
         // quizListに追加
         quizList.length = 0;
         quizzes.forEach(q => quizList.push(q));
@@ -576,8 +641,7 @@ function showSettings(page = 1) {
         zipImportMsg.style.color = "#e23c3c";
         console.error(err);
       }
-     
-  }
+    };
 
     // 前へ（カテゴリ設定）ボタン
     const toCategoryPageBtn = document.getElementById('toCategoryPageBtn');
