@@ -539,11 +539,15 @@ function showSettings(page = 1) {
           zipImportMsg.style.color = "#e23c3c";
           return;
         }
-        // 1行目はヘッダー
         const quizzes = [];
         const headers = rows[0];
+        const headerLen = headers.length;
         for (let i = 1; i < rows.length; i++) {
           const cells = rows[i];
+          // 不足分を空文字で埋める
+          if (cells.length < headerLen) {
+            cells.length = headerLen;
+          }
           if (cells.length < 9) continue;
           const category = cells[0].trim();
           const question = cells[1].trim();
