@@ -1,55 +1,219 @@
+function getrandom(min, max) {
+    var random = Math.floor(Math.random() * (max + 1 - min)) + min;
+    return random;
+}
+
+
+const floweyQuotes = [
+  "さぁて、オマエのオツムが試される時間だよ☆",
+  "おっほーう、クイズのお時間だぁ☆準備はいいよねぇ？",
+  "ねぇねぇ、どれだけバカか証明してみてよ！",
+  "これは簡単だよ…たぶん、キミには無理だけどねぇ☆",
+  "正解したらほめてあげるよ…ウソだけどねぇ！",
+  "さぁ～て、どれだけ間違えるか見ものだねぇ☆",
+  "この問題、解けたらスゴイよ。いや、解けないか☆",
+  "フフフ、キミにしては難しすぎるかな？",
+  "え？まだ諦めてないの？じゃあ次ぃ～！",
+  "ハイ、脳ミソフル回転してみて？できるならねぇ☆",
+  "知ってる？クイズって、バカが炙り出される遊びなんだよ☆",
+  "そろそろボロが出る頃だと思ってたんだ～！",
+  "ほら、これ答えてみてよ？どうせ間違えるけどさぁ☆",
+  "準備はいい？…してなくても始めるけど☆",
+  "また出しちゃうよ～ん♪問題ぃ、いっきまぁ～す☆",
+  "次の問題が来るよ！逃げちゃダメだよ？いや、逃げてもいいけど☆",
+  "クイズが趣味なんて言わないでよ？恥ずかしいから☆",
+  "問題、いっくよー！泣く準備はできてる？",
+  "さて、オマエの知能指数が明らかになる時だ！",
+  "この問題、間違えると…アハハ、楽しいコトが起きるかも☆",
+  "はいっ！サービス問題☆正解できなきゃ笑っちゃうよ～？",
+  "こたえられるかなぁ？…なんてね、ムリだよねぇ☆",
+  "ねぇねぇ、今まで何問正解したっけ？あ、興味ないか☆",
+  "まだやるの？根性だけは認めてあげるよ☆",
+  "この問題…解けたら奇跡だよ！…あ、奇跡って嫌いだったっけ？",
+  "へへへっ…次はちょっとだけムズカシイよ☆ほんのちょっとね☆",
+  "ボクの期待、いい意味で裏切ってほしいな～！ムリだろうけど☆",
+  "この問題、特別に作ってあげたんだ～！特別にキミのためにねぇ☆",
+  "さぁ～て、次の罠にかかってくれるかな？",
+  "まだまだ終わらないよ～☆何千問でも出してあげる♪",
+  "正解できるかは…キミ次第！…ウソ、全部ボク次第☆",
+  "選択肢見て絶望する準備、できてる？",
+  "さぁ、脳みそ働かせようねぇ？たまにはさぁ☆",
+  "あーあ、もう答えわかっちゃったよ～。でもキミはまだ悩んでるのかぁ☆",
+  "“運”に頼る？いいねぇ～、その姿勢、大好き☆",
+  "よぉし、じゃあ次のオモチャを与えてあげる♪",
+  "クイズってたのしいよねぇ～☆ボクは答え知ってるから特にさぁ☆",
+  "もし間違えたら、どうなるか知ってるよねぇ？",
+  "この問題、正解したら……すごい！間違えたら……フフフフ☆",
+  "オマエの限界、見せてもらおうかぁ☆",
+  "さて、次の問題にいこうじゃないか！逃げ道はナシだよぉ☆",
+  "答える前にヒント？ないよそんなもん☆",
+  "キミの頭、どれくらい豆腐かな～って試す問題だよ☆",
+  "間違えたらどうなると思う～？ワクワクするねぇ☆",
+  "問題出していい？って聞かないよぉ☆はい出すよぉ～☆",
+  "カンで答える？フフフ、愚か者め☆",
+  "この問題、昔“誰か”が泣いたやつだよ☆",
+  "次の問題ぃ～…楽しみだねぇ☆キミの顔見るのがさぁ☆",
+  "記憶力も問われるよぉ～☆ないかもしれないけどさぁ！",
+  "今度は運だけじゃムリかもねぇ☆",
+  "さあ、そろそろマジになってみようか？",
+  "キミ、まだ正気？クイズってそういうモノじゃないよ☆",
+  "やめた方がいいと思うな～。でも出すけど☆",
+  "ねぇ、“希望”ってまだ持ってる？それ、間違いの元だよぉ☆",
+  "次の問題、間違えたら…ボクが笑いすぎて爆発しちゃうかも☆",
+  "あ～、もう！早く間違えて！待ちきれないよぉ～☆",
+  "フフフ、キミの苦しむ顔が一番のごほうびだよ☆",
+  "この問題で運命が変わる…わけないか☆",
+  "ねぇ、“難しい”って言った？まだ序の口だよぉ☆",
+  "正解しても安心しないでね？もっと酷くなるから☆",
+  "次も外したら、何かが起きるよ☆ふふふっ♪",
+  "ほらほら、時間ないよ～？焦れ焦れぇ☆",
+  "答えがわかる？すごいねぇ、キミにしてはさぁ☆",
+  "クイズって言葉、ほんとは“トラウマ”の別名だったりして☆",
+  "この問題、昔“あの子”が間違えたんだよぉ☆",
+  "フラグ立てちゃったねぇ～！じゃあ問題、いくよぉ☆",
+  "がんばってねぇ～♪…無駄だけど☆",
+  "問題！…あっ、やっぱやめよっかな？って思った？ムリムリ☆",
+  "え？ヒント？…ふふふ、ボクが敵だってわかってる？",
+  "次の問題は～…ボクの気まぐれで決めたよ☆",
+  "あー、早く間違えてぇ～。間違えてくれなきゃ楽しくないよぉ☆",
+  "次の問題は“サービス”だよ！サービス“地獄”って意味だけど☆",
+  "あはっ、あっはっはっは！…ごめん、思い出し笑い☆",
+  "今なら逃げてもいいよ？いやウソだけど☆",
+  "難易度？もちろん“フラウィー級”さ☆",
+  "うふふふふ…この問題、大好きなんだよねぇ☆",
+  "この問題、答えたらボクとおそろいになれるかも☆ウソだけど☆",
+  "おやおや？まだ元気そうだねぇ☆じゃ、ちょっと疲れさせてあげる♪",
+  "次も正解できたら…ちょっと見直すかも☆1ミリくらいねぇ",
+  "じゃ、次の問題！全力で間違ってねぇ☆",
+  "ねぇ、これクイズじゃなくて拷問だって気づいた？え？まだ？☆",
+  "次はねぇ～、超★理不尽★問題だよぉ～☆",
+  "この問題、ボクが考えたんだ！すごいでしょ？ウザいでしょ？☆",
+  "早く答えてよぉ～☆答えるのが怖いんでしょぉ～？",
+  "次の問題、当てたら褒めてあげるよ☆（棒読み）",
+  "おいおい、まだ生きてるのぉ？じゃ、もっと難しいのいこっかぁ☆",
+  "じゃあ～次はちょっとイジワルしよっかなぁ～☆",
+  "キミのこと、ちょ～っとだけ見直すかも…間違えなければねぇ☆",
+  "この問題、キミの記憶が試されるよ～☆どうせボロボロだけど☆",
+  "ねぇ、そろそろ降参したら？まだ間に合うよ？（多分）",
+  "このクイズ、ボクの愛がたっぷり詰まってるよ☆毒入りだけど☆",
+  "あれ？そんなに震えてるの？フフフフフ☆",
+  "さぁさぁ！どんどん行こうよ～☆地獄の底までねぇ☆",
+  "この問題、簡単かも～。キミにとってはね？地獄だけど☆",
+  "アッハハ！これが最後？だったらよかったのにねぇ☆",
+  "さぁ、選んで選んでぇ☆地雷はどれかな～☆",
+  "やぁだ、もうぉ～☆キミってほんと…笑える☆",
+  "フフッ…期待してないけど、一応聞いてみよっか☆",
+  "じゃ、次の問題☆希望？絶望？選ぶのはキミさぁ☆",
+  "さぁて…最終問題…なんて思った？甘いよぉ☆ず～っと続くんだから♪"
+];
+
+function getRandomFloweyQuote() {
+  const index = Math.floor(Math.random() * floweyQuotes.length);
+  return floweyQuotes[index];
+}
+
+// IndexedDBを使ったクイズデータ保存・読込
+
+const DB_NAME = 'quizDB';
+const DB_VERSION = 1;
+const QUIZ_STORE = 'quizzes';
+const IMAGE_STORE = 'images';
+
+// IndexedDBに保存
+async function saveToIndexedDB(quizzes, imageBlobs) {
+  return new Promise((resolve, reject) => {
+    const openReq = indexedDB.open(DB_NAME, DB_VERSION);
+    openReq.onupgradeneeded = function(e) {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(QUIZ_STORE)) {
+        db.createObjectStore(QUIZ_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(IMAGE_STORE)) {
+        db.createObjectStore(IMAGE_STORE);
+      }
+    };
+    openReq.onsuccess = function(e) {
+      const db = e.target.result;
+      const tx = db.transaction([QUIZ_STORE, IMAGE_STORE], 'readwrite');
+      const quizStore = tx.objectStore(QUIZ_STORE);
+      const imgStore = tx.objectStore(IMAGE_STORE);
+      quizStore.clear();
+      imgStore.clear();
+      quizzes.forEach((q, i) => quizStore.put({ ...q, id: i }));
+      Object.entries(imageBlobs).forEach(([name, blob]) => {
+        if (blob instanceof Blob) {
+          imgStore.put(blob, name);
+        } else {
+          console.warn('保存時: 画像がBlob型ではありません', name, blob);
+        }
+      });
+      tx.oncomplete = () => resolve();
+      tx.onerror = (err) => reject(err);
+    };
+    openReq.onerror = (err) => reject(err);
+  });
+}
+
+// IndexedDBから読込
+async function loadFromIndexedDB() {
+  return new Promise((resolve, reject) => {
+    const openReq = indexedDB.open(DB_NAME, DB_VERSION);
+    openReq.onupgradeneeded = function(e) {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(QUIZ_STORE)) {
+        db.createObjectStore(QUIZ_STORE, { keyPath: 'id' });
+      }
+      if (!db.objectStoreNames.contains(IMAGE_STORE)) {
+        db.createObjectStore(IMAGE_STORE);
+      }
+    };
+    openReq.onsuccess = function(e) {
+      const db = e.target.result;
+      const tx = db.transaction([QUIZ_STORE, IMAGE_STORE], 'readonly');
+      const quizStore = tx.objectStore(QUIZ_STORE);
+      const imgStore = tx.objectStore(IMAGE_STORE);
+      const quizzes = [];
+      quizStore.openCursor().onsuccess = function(ev) {
+        const cursor = ev.target.result;
+        if (cursor) {
+          quizzes.push(cursor.value);
+          cursor.continue();
+        } else {
+          const imageBlobs = {};
+          imgStore.openCursor().onsuccess = function(ev2) {
+            const cursor2 = ev2.target.result;
+            if (cursor2) {
+              const val = cursor2.value;
+              if (val instanceof Blob) {
+                imageBlobs[cursor2.key] = URL.createObjectURL(val);
+              } else {
+                console.warn('読込時: 画像がBlob型ではありません', cursor2.key, val);
+                imageBlobs[cursor2.key] = '';
+              }
+              cursor2.continue();
+            } else {
+              // quizzesのimageをBlob URLに置換
+              quizzes.forEach(q => {
+                if (q.image && imageBlobs[q.image]) {
+                  q.image = imageBlobs[q.image];
+                }
+              });
+              resolve({ quizzes, imageBlobs });
+            }
+          };
+        }
+      };
+      tx.onerror = (err) => reject(err);
+    };
+    openReq.onerror = (err) => reject(err);
+  });
+}
+
+
 var zipQuizUploadBtn;
 var zipQuizInput;
 
-const quizList = [
-  {
-    category: "C++",
-    question: `
-      <div>
-        次のC++コードの空欄（<b>①</b>〜<b>③</b>）を埋めて、標準出力に「Hello, World!」と表示されるようにしてください。
-        <pre style="background:#f8f8f8;padding:1em;border-radius:8px;">
-#include &lt;<b>①</b>&gt;
-
-int <b>②</b>() {
-    std::cout &lt;&lt; <b>③</b> &lt;&lt; std::endl;
-    return 0;
-}
-        </pre>
-      </div>
-    `,
-    blanks: 3,
-    choices: [
-      'A. main',
-      'B. "Hello, World!"',
-      'C. stdio.h',
-      'D. iostream',
-      'E. start',
-      'F. cout'
-    ],
-    answer: [3, 0, 1], // ①: D. iostream, ②: A. main, ③: B. "Hello, World!"
-    explanation: `
-      <ul>
-        <li>① <b>iostream</b>（D）が必要です。</li>
-        <li>② <b>main</b>（A）がC++のエントリポイントです。</li>
-        <li>③ <b>"Hello, World!"</b>（B）が出力内容です。</li>
-      </ul>
-    `
-  },
-  {
-    category: "HTML",
-    question: "HTMLの略はどれですか？",
-    blanks: 1,
-    choices: [
-      "Hyper Text Markup Language",
-      "High Text Machine Language",
-      "Hyperlinks and Text Markup Language",
-      "Home Tool Markup Language"
-    ],
-    answer: [0],
-    explanation: "HTMLは「Hyper Text Markup Language」の略です。Webページを作成するためのマークアップ言語です。"
-  }
-  // 他の問題も同様に追加
-];
+var quizList = [];
 
 // カテゴリ一覧を自動生成
 const categories = Array.from(new Set(quizList.map(q => q.category)));
@@ -62,6 +226,7 @@ let totalAnswered = 0;
 let totalCorrect = 0;
 let currentStreak = 0;
 let maxStreak = 0;
+let current_miss = 0; // 現在の連続不正解数
 
 let isJudgeShowing = false;
 
@@ -146,14 +311,16 @@ document.body.appendChild(settingsOverlay);
 function parseQuizCsv(csvText) {
   const lines = csvText.split(/\r?\n/).map(l => l.trim()).filter(l => l);
   const quizzes = [];
-  for (const line of lines) {
-    // カンマ区切りで分割（解説や問題文にカンマが含まれる場合は要注意）
-    // "..."で囲まれている場合のカンマは分割しないようにする
+  if (lines.length === 0) return quizzes;
+  // 1行目はヘッダーなのでスキップ
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    // カンマ区切り・引用符対応
     const cells = [];
     let cell = '';
     let inQuote = false;
-    for (let i = 0; i < line.length; i++) {
-      const c = line[i];
+    for (let j = 0; j < line.length; j++) {
+      const c = line[j];
       if (c === '"') {
         inQuote = !inQuote;
       } else if (c === ',' && !inQuote) {
@@ -165,15 +332,19 @@ function parseQuizCsv(csvText) {
     }
     cells.push(cell);
 
-    if (cells.length < 6) continue; // 必須項目不足
+    // デバッグ：各行のセル数と内容を確認
+     //console.log('cells:', cells);
+
+    // 必須項目数はヘッダーと同じにする
+    if (cells.length < 9) continue;
 
     const category = cells[0].trim();
     const question = cells[1].trim();
-    const imageCell = cells[2].trim();
+    const image = cells[2].trim(); // ←ここ
     // 選択肢は4番目から、解答配列の直前まで
-    let answerIdx = cells.findIndex((c, i) => i > 2 && c.trim().startsWith('['));
+    // 選択肢数はヘッダーから自動判定
+    let answerIdx = cells.findIndex((c, idx) => idx > 2 && c.trim().startsWith('['));
     if (answerIdx === -1) continue;
-    // 空欄の選択肢を除外
     const choices = cells.slice(3, answerIdx).map(c => c.trim()).filter(c => c !== "");
     let answer;
     try {
@@ -183,10 +354,13 @@ function parseQuizCsv(csvText) {
     }
     const explanation = cells.slice(answerIdx + 1).join(',').trim();
 
+    // デバッグ：image列を必ず出力
+     //console.log('parseQuizCsv:', {category, question, image, choices, answer, explanation});
+
     quizzes.push({
       category,
       question,
-      image: imageCell,
+      image, // ←ここで必ずセット
       blanks: Array.isArray(answer) ? answer.length : 1,
       choices,
       answer,
@@ -223,47 +397,64 @@ function showSettings(page = 1) {
   settingsOverlay.querySelector('.settings-content').style.maxHeight = '80vh';
   settingsOverlay.querySelector('.settings-content').style.overflowY = 'auto';
 
-  if (page === 1) {
-    // チェックボックスの状態を反映
-    const form = document.getElementById('categoryForm');
-    categories.forEach((cat, i) => {
-      form.elements['category'][i].checked = selectedCategories.includes(cat);
-    });
-
-    // すべて選択ボタン
-    const selectAllBtn = document.getElementById('selectAllBtn');
-    selectAllBtn.onclick = () => {
-      Array.from(form.elements['category']).forEach(cb => cb.checked = true);
-    };
-
-    // すべて解除ボタン
-    const deselectAllBtn = document.getElementById('deselectAllBtn');
-    deselectAllBtn.onclick = () => {
-      Array.from(form.elements['category']).forEach(cb => cb.checked = false);
-    };
-
-    // 保存ボタン
-    form.onsubmit = (e) => {
-      e.preventDefault();
-      const checked = Array.from(form.elements['category'])
-        .filter(cb => cb.checked)
-        .map(cb => cb.value);
-      if (checked.length === 0) {
-        alert('最低1カテゴリは選択してください。');
-        return;
+    if (page === 1) {
+      // localStorageからカテゴリ選択状況を復元
+      const saved = localStorage.getItem('selectedCategories');
+      if (saved) {
+        selectedCategories = JSON.parse(saved);
+      } else {
+        selectedCategories = [...categories]; // デフォルトは全選択
       }
-      selectedCategories = checked;
-      saveCategoriesAndQuizList();
-      settingsOverlay.style.display = 'none';
-      document.querySelector('.main-content').style.display = '';
-      showQuiz();
-    };
 
-    // 次へ（CSVインポート）ボタン
-    const toCsvPageBtn = document.getElementById('toCsvPageBtn');
-    toCsvPageBtn.onclick = () => showSettings(2);
+      settingsOverlay.innerHTML = `
+        <div class="settings-content" style="max-height: 80vh; overflow-y: auto;">
+          <h2>出題カテゴリ設定</h2>
+          <form id="categoryForm">
+            <div style="margin-bottom:1em;">出題するカテゴリにチェックを入れてください。</div>
+            <div style="margin-bottom:1em;">
+              <button type="button" id="selectAllBtn" style="margin-bottom:0.5em;">すべて選択</button>
+              <button type="button" id="deselectAllBtn" style="margin-bottom:0.5em;">すべて解除</button>
+            </div>
+            <div id="categoryCheckboxes" style="max-height:300px;overflow:auto;">
+              ${categories.map(cat => `
+                <label style="display:block;margin-bottom:0.5em;">
+                  <input type="checkbox" name="category" value="${cat}" ${selectedCategories.includes(cat) ? 'checked' : ''}>
+                  ${cat}
+                </label>
+              `).join('')}
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-top:2em;">
+              <button type="button" id="toCsvPageBtn" style="background:#6ea8fe;color:#fff;border:none;border-radius:8px;padding:0.7rem 1.2rem;font-size:1rem;cursor:pointer;">次へ（ZIPインポート）</button>
+              <button type="submit" id="saveCategoryBtn" style="margin-top:0;">保存して戻る</button>
+            </div>
+          </form>
+        </div>
+      `;
+      settingsOverlay.style.display = 'flex';
+      document.querySelector('.main-content').style.display = 'none';
 
-  } else if (page === 2) {
+      // すべて選択/解除ボタン
+      document.getElementById('selectAllBtn').onclick = () => {
+        document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = true);
+      };
+      document.getElementById('deselectAllBtn').onclick = () => {
+        document.querySelectorAll('input[name="category"]').forEach(cb => cb.checked = false);
+      };
+
+      // 保存ボタン
+      document.getElementById('categoryForm').onsubmit = (e) => {
+        e.preventDefault();
+        selectedCategories = Array.from(document.querySelectorAll('input[name="category"]:checked')).map(cb => cb.value);
+        localStorage.setItem('selectedCategories', JSON.stringify(selectedCategories));
+        settingsOverlay.style.display = 'none';
+        document.querySelector('.main-content').style.display = '';
+        showQuiz();
+        updateStatusBar();
+      };
+
+      // 次へボタン
+      document.getElementById('toCsvPageBtn').onclick = () => showSettings(2);
+    } else if (page === 2) {
     // ZIPインポート機能
     const zipInput = document.getElementById('zipImportInput');
     const importZipBtn = document.getElementById('importZipBtn');
@@ -280,7 +471,6 @@ function showSettings(page = 1) {
     zipQuizInput = document.getElementById('zipQuizInput');
     if (zipQuizUploadBtn && zipQuizInput) {
       zipQuizUploadBtn.onclick = () => {
-        console.log("おっと、ZIPファイルを選択してください。");
         zipQuizInput.click();
       };
     }
@@ -318,39 +508,22 @@ function showSettings(page = 1) {
             .filter(name => name.startsWith('img/') && !zip.files[name].dir)
             .map(async name => {
               const blob = await zip.file(name).async('blob');
-              imageBlobs[name.replace('img/', '')] = URL.createObjectURL(blob);
+              imageBlobs[name.replace(/^img\//, '')] = URL.createObjectURL(blob);
             })
         );
 
+        // quizzesの各問題のimageをBlob URLに置換
         quizzes.forEach(q => {
           if (q.image) {
+            // 画像ファイル名だけの場合もimg/付きの場合も対応
             let imgName = q.image.trim().replace(/^img\//, '');
-            console.log('quiz.image:', q.image, 'imgName:', imgName, 'imageBlobs:', Object.keys(imageBlobs));
-            if (imageBlobs[imgName]) {
-              q.image = imageBlobs[imgName];
-              console.log('置換成功:', q.image);
-            } else {
-              console.log('画像が見つかりません:', imgName);
-              q.image = '';
-            }
-          }
-        });
-
-        // 画像パスをBlob URLに置換
-        quizzes.forEach(q => {
-          // 問題画像（image）が img/付き・無し両方に対応
-          if (q.image) {
-            let imgName = q.image.trim().replace(/^img\//, '');
-            // デバッグ用
-            // console.log('quiz.image:', q.image, 'imgName:', imgName, 'imageBlobs:', Object.keys(imageBlobs));
             if (imageBlobs[imgName]) {
               q.image = imageBlobs[imgName];
             } else {
-              // 画像が見つからない場合は空にする
               q.image = '';
             }
           }
-          // 問題文・選択肢・解説も同様に置換
+          // 問題文・選択肢・解説内のimgタグも置換
           if (typeof q.question === 'string') {
             q.question = q.question.replace(/<img\s+src="img\/([^"]+)"/g, (m, fname) => {
               fname = fname.trim();
@@ -384,7 +557,13 @@ function showSettings(page = 1) {
           }
         });
 
+        //データの保存
+        await saveToIndexedDB(quizzes, imageBlobs);
+
+        // デバッグ：ここでquizzesのimageがBlob URLになっているか確認
+        //console.log('quizzes after blob url replace:', quizzes);
         // quizListに追加
+        quizList.length = 0;
         quizzes.forEach(q => quizList.push(q));
         saveQuizListToLocalStorage();
         zipImportMsg.style.color = "#23b04b";
@@ -397,6 +576,7 @@ function showSettings(page = 1) {
         zipImportMsg.style.color = "#e23c3c";
         console.error(err);
       }
+     
   }
 
     // 前へ（カテゴリ設定）ボタン
@@ -410,6 +590,7 @@ function showSettings(page = 1) {
       document.querySelector('.main-content').style.display = '';
       settingsOverlay.style.display = 'none';
       document.querySelector('.main-content').style.display = '';
+      //console.log('quizList before showQuiz:', quizList);
       showQuiz();
     };
   }
@@ -533,19 +714,21 @@ function showQuiz() {
     nextBtn.style.display = 'none';
     return;
   }
+  if(document.getElementById('themeToggle').checked){
+    document.getElementById('enemy_serif').innerText = getRandomFloweyQuote();
+  }
   currentQuizIndex = quizRange[Math.floor(Math.random() * quizRange.length)];
   const quiz = quizList[currentQuizIndex];
 
   // 問題画像があれば先頭に表示
   let questionHtml = quiz.question;
-  if (quiz.image) {
-    let imgSrc = quiz.image;
-    if (imgSrc.startsWith('blob:')) {
-      // Blob URLならimgタグで表示
-      imgSrc = `<img src="${imgSrc}" alt="" style="max-width:200px;max-height:120px;display:block;margin-bottom:1em;">`;
-      questionHtml = imgSrc + questionHtml;
+  //console.log('showQuiz quiz.image:', quiz.image); // デバッグ用
+  if (quiz.image && typeof quiz.image === 'string') {
+    if (quiz.image.startsWith('blob:')) {
+      const imgTag = `<img src="${quiz.image}" alt="" style="max-width:200px;max-height:120px;display:block;margin-bottom:1em;">`;
+      questionHtml = imgTag + questionHtml;
+      //console.log('imgタグ生成:', imgTag); // デバッグ用
     }
-    // ファイル名やimg/xxx.pngの場合は何もしない（警告も出さない）
   }
   questionEl.innerHTML = questionHtml;
 
@@ -579,7 +762,33 @@ function showQuiz() {
     blankDiv.appendChild(judgeMark);
     judgeMarks.push(judgeMark);
 
-    currentChoices.forEach((choice, idx) => {
+    if(document.getElementById('themeToggle').checked){
+      currentChoices.forEach((choice, idx) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.type = 'button';
+        btn.innerHTML = `<img src="img/soul.svg" class="heart" alt="♥">` + choice;
+        btn.onclick = () => {
+          if (isJudgeShowing || isAnswered) return;
+          userAnswers[i] = idx;
+          Array.from(blankDiv.querySelectorAll('.choice-btn')).forEach((b, j) => {
+            b.classList.toggle('selected', j === idx);
+          });
+          if (isAnswered) btn.disabled = true;
+          if (answerBtn) {
+            answerBtn.disabled = !userAnswers.every(ans => ans !== null);
+          }
+          if (blanks === 1) {
+            isAnswered = true;
+            checkMultiBlankAnswer(judgeMarks);
+            // 答え合わせ後は全ての.choice-btnに.answeredを付与
+            Array.from(blankDiv.querySelectorAll('.choice-btn')).forEach(b => b.classList.add('answered'));
+          }
+        };
+        blankDiv.appendChild(btn);
+      });
+    }else{
+      currentChoices.forEach((choice, idx) => {
       const btn = document.createElement('button');
       btn.className = 'choice-btn';
       btn.type = 'button';
@@ -605,6 +814,7 @@ function showQuiz() {
       };
       blankDiv.appendChild(btn);
     });
+    }
     blanksArea.appendChild(blankDiv);
   }
 
@@ -613,16 +823,29 @@ function showQuiz() {
     answerBtn = document.createElement('button');
     answerBtn.id = 'answerBtn';
     answerBtn.type = 'button';
-    answerBtn.textContent = '解答';
+    if(document.getElementById('themeToggle').checked){
+      answerBtn.innerHTML = `<img src="img/fight.webp" alt="FIGHT" style="height:3.5em;vertical-align:middle;">`;
+      answerBtn.style.background = 'transparent';
+      answerBtn.style.border = 'none';
+      answerBtn.style.padding = '0.2em 0.5em';
+    } else {
+      answerBtn.textContent = '解答';
+    }
     answerBtn.disabled = true;
     answerBtn.onclick = () => {
       if (isJudgeShowing || isAnswered) return;
       if (!userAnswers.every(ans => ans !== null)) return;
       isAnswered = true;
       checkMultiBlankAnswer(judgeMarks);
+      if(document.getElementById('themeToggle').checked){
+        Array.from(document.querySelectorAll('.choice-btn')).forEach(b => b.classList.add('answered'));
+      }
+      
     };
     answerBtnArea.appendChild(answerBtn);
   }
+
+  
 
   resultEl.style.display = 'none';
   nextBtn.style.display = 'none';
@@ -670,10 +893,53 @@ function checkMultiBlankAnswer(judgeMarks) {
   totalAnswered++;
   if (allCorrect) {
     totalCorrect++;
+    current_miss = 0;
     currentStreak++;
     if (currentStreak > maxStreak) maxStreak = currentStreak;
   } else {
     currentStreak = 0;
+    current_miss++;
+  }
+
+  //フラウィーが表示されていたら
+  if(document.getElementById('themeToggle').checked){
+    let serif = "";
+
+    if (allCorrect) {
+      switch (currentStreak) {
+        case 2:serif="ほぉ～、調子に乗ってきた？でも、それ…長く続くかなぁ☆";break;
+        case 3:serif="フフフ、なかなかやるじゃん。でもね、まだ“本番”じゃないんだよ☆";break;
+        case 4:serif="うわぁ～、優等生だぁ～。でもさ、ずっと正解してられると思わないでよ☆";break;
+        case 5:serif="……なにそれ。ちょっとムカついてきたかも。フフフ☆";break;
+        case 10:serif="おいおいおい、マジかよ！？…ちょっと引くわぁ。でもさ、そういうの…壊すの、楽しいんだよねぇ☆";break;
+        case 50:serif="うそでしょ？マジで人間？…君、ちょっと気持ち悪いよぉ☆（褒めてないよ？）";break;
+        case 100:serif="ねぇ、ほんとに何者なの…？そんなに正解して…怖いんだけど☆ニセモノじゃないよねぇ？";break;
+        case 500:serif="やっっっっっっばいねキミ！！まさかここまで来るとは…あ～あ、ボクの計画が狂っちゃった☆";break;
+        case 1000:serif="……ねぇ、もしかして“セーブとロード”使ってる？そうでしょ？ねぇ、ねぇぇぇぇぇ！！！";break;
+        case 5000:serif="キミさぁ…もう人間やめてるでしょ？これ、誰への挑戦状なのさぁ？ボク？それとも“あの子”？フフフ☆";break;
+        case 10000:serif="……おかしいよ。これは…おかしい。キミは誰？なにが目的？…まさか、また“やり直してる”の？";break;
+        case 1000000:serif="キミはさ……もう神様なんじゃない？それとも、それを超えた“何か”……？";break;
+        default:serif="へぇ～、やるじゃない！ちょっとは脳ミソ使えるんだねぇ☆";break;
+      }
+      
+    } else {
+      switch (current_miss) {
+        case 2:serif="おっかしいなぁ～？手加減してあげてるのに、まだ間違えるのぉ？";break;
+        case 3:serif="ねぇ、それ本気でやってる？もしかしてクイズって言葉知らないのかな？";break;
+        case 4:serif="もうやめたら？見てるこっちが恥ずかしくなってくるよぉ…☆";break;
+        case 5:serif="ホントに同じ世界に住んでるの？それともバカの異世界から来たのかな～？";break;
+        case 10:serif="アッハハハ！ねぇ、逆に才能あるよ！“間違え続ける”っていう新ジャンルの天才～！";break;
+        case 50:serif="50連敗ぃ！？ククク…！伝説になるね、君。『伝説の愚者』ってやつ☆";break;
+        case 100:serif="100回も間違えるって…もう才能っていうか呪いじゃない？フフッ、キモチイイ…☆";break;
+        case 500:serif="もう笑うしかないね！アハハハハハハハ！！！キミ、何かに操られてない？ねぇ、大丈夫？☆";break;
+        case 1000:serif="バグかな？いや、これ演出？それとも地獄？どっちにしろ、キミ…最高だよぉ☆";break;
+        case 5000:serif="まだやってるの！？何その執念！？こわ～～～☆いや、ボクちょっと尊敬しちゃうかも！";break;
+        case 10000:serif="10,000回…間違えて…それでも止めない？アハハハハ！！これぞ“本物の決意”ってやつかな☆";break;
+        case 1000000:serif="……だめだ。ボク、言葉が出ないよ……キミって、ほんとに……すっごいねぇ……";break;
+        default:serif="アハハハハ！それで正解したつもり～？バッカだなぁ☆";break;
+      }
+    }
+    document.getElementById('enemy_serif').innerText= serif;
   }
   updateStatusBar();
 
@@ -712,14 +978,200 @@ function showJudgeOverlay(isCorrect) {
 
 nextBtn.onclick = () => {
   if (isJudgeShowing) return;
+  //console.log('quizList before showQuiz:', quizList);
   showQuiz();
 };
 
+
+
+function getTodayStr() {
+  const now = new Date();
+  return now.getFullYear() + '-' +
+    String(now.getMonth() + 1).padStart(2, '0') + '-' +
+    String(now.getDate()).padStart(2, '0');
+}
+
+function saveQuizLog(stats) {
+  let logs = JSON.parse(localStorage.getItem('quizLogs') || '[]');
+  const today = getTodayStr();
+  // stats.dateも必ずYYYY-MM-DD形式にする
+  stats.date = today;
+  const idx = logs.findIndex(log => log.date === today);
+  if (idx !== -1) {
+    logs[idx] = stats; // 上書き
+  } else {
+    logs.push(stats);
+  }
+  localStorage.setItem('quizLogs', JSON.stringify(logs));
+}
+
+function getQuizLogs() {
+  return JSON.parse(localStorage.getItem('quizLogs') || '[]');
+}
+
+function clearQuizLogs() {
+  localStorage.removeItem('quizLogs');
+}
+
 function updateStatusBar() {
   const rate = totalAnswered === 0 ? 0 : Math.round((totalCorrect / totalAnswered) * 100);
+
+  // ログ保存
+  if(totalAnswered > 0) {
+    const stats = {
+      date: getTodayStr(),
+      total: totalAnswered,
+      correct: totalCorrect,
+      rate: totalAnswered === 0 ? 0 : Math.round((totalCorrect / totalAnswered) * 100),
+      streak: currentStreak,
+      maxStreak: maxStreak
+    };
+    saveQuizLog(stats);
+  }
   statusBar.textContent =
     `現在解いた問題数: ${totalAnswered}, 内正解数: ${totalCorrect}, 正解率: ${rate}%, 連続正解数: ${currentStreak}, 最高連続正解数: ${maxStreak}`;
 }
 
+
+//ページ読み込み時の処理
+window.addEventListener('DOMContentLoaded', async () => {
+  // IndexedDBからデータを読み込む
+  try {
+    const { quizzes, imageBlobs } = await loadFromIndexedDB();
+    if (quizzes && quizzes.length > 0) {
+      // quizListに反映
+      quizList.length = 0;
+      quizzes.forEach(q => {
+        // 画像ファイル名があればBlob URLに置換
+        if (q.image && imageBlobs[q.image]) {
+          q.image = URL.createObjectURL(imageBlobs[q.image]);
+        }
+        quizList.push(q);
+      });
+      // カテゴリ再生成
+      while (categories.length) categories.pop();
+      Array.from(new Set(quizList.map(q => q.category))).forEach(cat => categories.push(cat));
+      selectedCategories = [...categories];
+      // 最初の問題を表示
+      showQuiz();
+      updateStatusBar();
+      return;
+    }
+  } catch (err) {
+    console.error('IndexedDBからの読込に失敗:', err);
+  }
+  const saved = localStorage.getItem('selectedCategories');
+  if (saved) {
+    selectedCategories = JSON.parse(saved);
+  }
+  // IndexedDBにデータがなければ初期問題を表示
+  showQuiz();
+  updateStatusBar();
+});
+
+
+// --- ログ保存・表示機能追加 ---
+
+// ログの保存・取得
+function getQuizLogs() {
+  return JSON.parse(localStorage.getItem('quizLogs') || '[]');
+}
+function clearQuizLogs() {
+  localStorage.removeItem('quizLogs');
+}
+
+// ログ表示ボタン作成
+const logBtn = document.createElement('button');
+logBtn.id = 'logBtn';
+logBtn.title = '学習ログ';
+logBtn.style.position = 'fixed';
+logBtn.style.top = '10px';
+logBtn.style.right = '60px'; // 設定ボタンの左
+logBtn.style.zIndex = 2000;
+logBtn.style.background = 'none';
+logBtn.style.border = 'none';
+logBtn.style.padding = '0.3em';
+logBtn.style.cursor = 'pointer';
+logBtn.style.display = 'flex';
+logBtn.style.alignItems = 'center';
+logBtn.style.justifyContent = 'center';
+
+const logIcon = document.createElement('img');
+logIcon.src = './img/log_icon.svg';
+logIcon.alt = '学習ログ';
+logIcon.style.width = '32px';
+logIcon.style.height = '32px';
+logBtn.appendChild(logIcon);
+
+document.body.appendChild(logBtn);
+
+// ログ表示用オーバーレイ
+const logOverlay = document.createElement('div');
+logOverlay.id = 'logOverlay';
+logOverlay.style.position = 'fixed';
+logOverlay.style.inset = '0';
+logOverlay.style.background = 'rgba(30,40,60,0.93)';
+logOverlay.style.zIndex = 3000;
+logOverlay.style.display = 'none';
+logOverlay.style.justifyContent = 'center';
+logOverlay.style.alignItems = 'flex-start';
+logOverlay.style.paddingTop = '5vh';
+document.body.appendChild(logOverlay);
+
+// ログ表示関数
+function showLogOverlay() {
+  const logs = getQuizLogs();
+  let tableRows = logs.map(log => `
+    <tr>
+      <td>${log.date}</td>
+      <td>${log.total}</td>
+      <td>${log.correct}</td>
+      <td>${log.rate}%</td>
+      <td>${log.streak}</td>
+      <td>${log.maxStreak}</td>
+    </tr>
+  `).join('');
+  if (!tableRows) {
+    tableRows = `<tr><td colspan="6" style="text-align:center;">ログがありません</td></tr>`;
+  }
+  logOverlay.innerHTML = `
+    <div class="settings-content" style="max-width:700px;width:95vw;">
+      <h2>学習ログ</h2>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:1em;">
+        <thead>
+          <tr>
+            <th>アクセス日時</th>
+            <th>解いた問題数</th>
+            <th>内正解数</th>
+            <th>正解率</th>
+            <th>連続正解数</th>
+            <th>最高連続正解数</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${tableRows}
+        </tbody>
+      </table>
+      <button id="clearLogBtn" style="background:#f5c6cb;color:#c82333;border:none;border-radius:8px;padding:0.7rem 1.2rem;font-size:1rem;cursor:pointer;margin-right:1em;">ログを削除</button>
+      <button id="closeLogBtn" style="background:#6ea8fe;color:#fff;border:none;border-radius:8px;padding:0.7rem 1.2rem;font-size:1rem;cursor:pointer;">閉じる</button>
+    </div>
+  `;
+  logOverlay.style.display = 'flex';
+
+  document.getElementById('closeLogBtn').onclick = () => {
+    logOverlay.style.display = 'none';
+  };
+  document.getElementById('clearLogBtn').onclick = () => {
+    if (confirm('本当にログを削除しますか？')) {
+      clearQuizLogs();
+      showLogOverlay();
+    }
+  };
+}
+
+// ボタンでログ画面表示
+logBtn.onclick = showLogOverlay;
+
 updateStatusBar();
+//console.log('quizList before showQuiz:', quizList);
 showQuiz();

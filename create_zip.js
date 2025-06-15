@@ -41,21 +41,16 @@ document.getElementById('addRowBtn').onclick = () => {
 
 // 選択肢追加
 document.getElementById('addChoiceBtn').onclick = () => {
-  // ヘッダー追加
   const theadTr = document.querySelector('#quizTable thead tr');
-  // 選択肢列のインデックスを取得（問題画像:2, 選択肢0:3, 選択肢1:4, ...）
   let choiceStart = 3;
   let choiceEnd = choiceStart;
   while (theadTr.children[choiceEnd] && theadTr.children[choiceEnd].textContent.startsWith('選択肢')) {
     choiceEnd++;
   }
-  // 新しい選択肢番号（0始まりに修正）
   const newChoiceNum = choiceEnd - choiceStart;
   const th = document.createElement('th');
   th.textContent = `選択肢${newChoiceNum}`;
-  // 選択肢列の最後（解答配列の直前）に挿入
   theadTr.insertBefore(th, theadTr.children[choiceEnd]);
-  // 各行にセル追加
   for (let row of table.rows) {
     const cell = row.insertCell(choiceEnd);
     cell.contentEditable = "true";
@@ -94,7 +89,6 @@ document.getElementById('exportZipBtn').onclick = async () => {
   csv += ths.join(',') + '\n';
   for (let row of table.rows) {
     const cells = Array.from(row.cells).map(cell => {
-      // カンマ・改行をエスケープ
       let v = cell.textContent.replace(/"/g, '""');
       if (v.match(/[",\n]/)) v = `"${v}"`;
       return v;
@@ -124,6 +118,7 @@ document.getElementById('exportZipBtn').onclick = async () => {
 
 // 既存ZIP読み込み
 document.getElementById('zipUploadBtn').onclick = () => {
+  document.getElementById('zipInput').value = '';
   document.getElementById('zipInput').click();
 };
 
@@ -136,7 +131,7 @@ document.getElementById('zipInput').addEventListener('change', async (e) => {
   // 画像読込
   await Promise.all(
     Object.keys(zip.files)
-      .filter(name => name.startsWith('img/') && !zip.files[name].dir) // ディレクトリでないものだけ
+      .filter(name => name.startsWith('img/') && !zip.files[name].dir)
       .map(async name => {
         const blob = await zip.file(name).async('blob');
         imgFiles[name.replace('img/', '')] = new File([blob], name.replace('img/', ''));
@@ -144,67 +139,102 @@ document.getElementById('zipInput').addEventListener('change', async (e) => {
   );
   updateImgList();
 
-  // CSV読込
+  // CSV読込（必ずappendCsvToTableのみ！）
   const csvFile = zip.file('quiz.csv');
   if (csvFile) {
     const csvText = await csvFile.async('string');
-    loadCsvToTable(csvText);
+    appendCsvToTable(csvText);
   }
   document.getElementById('exportMsg').textContent = "ZIP読込完了";
   updateImgCellValidation();
 });
 
-// CSVをテーブルに反映
-function loadCsvToTable(csvText) {
-  // テーブル初期化
-  while (table.rows.length > 0) table.deleteRow(0);
-  const lines = csvText.split(/\r?\n/).filter(l => l.trim());
-  if (lines.length === 0) return;
-  // ヘッダー
-  const headers = lines[0].split(',');
-  const theadTr = document.querySelector('#quizTable thead tr');
-  while (theadTr.children.length > headers.length) theadTr.removeChild(theadTr.lastChild);
-  while (theadTr.children.length < headers.length) {
-    const th = document.createElement('th');
-    // 0始まりに修正
-    th.textContent = `選択肢${theadTr.children.length - 3}`;
-    theadTr.insertBefore(th, theadTr.children[theadTr.children.length - 3]);
-  }
-  headers.forEach((h, i) => {
-    // 既存の「選択肢N」列は0始まりに修正
-    if (h.match(/^選択肢\d+$/)) {
-      theadTr.children[i].textContent = `選択肢${i - 3}`;
-    } else {
-      theadTr.children[i].textContent = h;
-    }
-  });
-  // 行
-  for (let i = 1; i < lines.length; i++) {
-    const row = table.insertRow();
-    const cells = [];
-    let cell = '';
-    let inQuote = false;
-    const line = lines[i];
-    for (let j = 0; j < line.length; j++) {
-      const c = line[j];
-      if (c === '"') {
-        inQuote = !inQuote;
-      } else if (c === ',' && !inQuote) {
-        cells.push(cell);
-        cell = '';
+// CSV1行を安全に分割
+function parseCsvLine(line) {
+  const cells = [];
+  let cell = '';
+  let inQuote = false;
+  for (let i = 0; i < line.length; i++) {
+    const c = line[i];
+    if (c === '"') {
+      if (inQuote && line[i + 1] === '"') {
+        cell += '"';
+        i++;
       } else {
-        cell += c;
+        inQuote = !inQuote;
       }
+    } else if (c === ',' && !inQuote) {
+      cells.push(cell);
+      cell = '';
+    } else {
+      cell += c;
     }
-    cells.push(cell);
-    for (let j = 0; j < headers.length; j++) {
-      const td = row.insertCell();
+  }
+  cells.push(cell);
+  return cells;
+}
+
+// テーブル末尾にCSVデータを追加（選択肢列数を自動調整）
+function appendCsvToTable(csvText) {
+  const rows = csvText.split(/\r?\n/).filter(line => line.trim());
+  if (rows.length < 2) return;
+  const tbody = document.querySelector('#quizTable tbody');
+  const theadTr = document.querySelector('#quizTable thead tr');
+
+  // 追加するCSVの選択肢列数を取得
+  const csvHeaders = parseCsvLine(rows[0]);
+  let csvChoiceStart = 3;
+  let csvChoiceEnd = csvChoiceStart;
+  while (csvHeaders[csvChoiceEnd] && csvHeaders[csvChoiceEnd].startsWith('選択肢')) {
+    csvChoiceEnd++;
+  }
+  const csvChoiceCount = csvChoiceEnd - csvChoiceStart;
+
+  // 現在のテーブルの選択肢列数を取得
+  let tableChoiceStart = 3;
+  let tableChoiceEnd = tableChoiceStart;
+  while (theadTr.children[tableChoiceEnd] && theadTr.children[tableChoiceEnd].textContent.startsWith('選択肢')) {
+    tableChoiceEnd++;
+  }
+  let tableChoiceCount = tableChoiceEnd - tableChoiceStart;
+
+  // 必要なら選択肢列を追加
+  if (csvChoiceCount > tableChoiceCount) {
+    for (let i = tableChoiceCount; i < csvChoiceCount; i++) {
+      const th = document.createElement('th');
+      th.textContent = `選択肢${i}`;
+      theadTr.insertBefore(th, theadTr.children[tableChoiceEnd]);
+      for (let row of tbody.rows) {
+        const cell = row.insertCell(tableChoiceEnd);
+        cell.contentEditable = "true";
+      }
+      tableChoiceEnd++;
+    }
+    tableChoiceCount = csvChoiceCount;
+  } else if (tableChoiceCount > csvChoiceCount) {
+    // 追加するCSVの行にも空の選択肢セルを追加するため、headerLenを調整
+    csvHeaders.length += (tableChoiceCount - csvChoiceCount);
+  }
+
+  // 列数を最大に合わせる
+  const headerLen = Math.max(csvHeaders.length, theadTr.children.length);
+
+  // データ行追加
+  for (let i = 1; i < rows.length; i++) {
+    const cells = parseCsvLine(rows[i]);
+    if (cells.length === 0 || cells.every(c => c === '')) continue;
+    // 選択肢列が足りない場合は空セルで埋める
+    cells.length = headerLen;
+    const tr = document.createElement('tr');
+    for (let j = 0; j < headerLen; j++) {
+      const td = document.createElement('td');
       td.contentEditable = "true";
       if (j === 2) td.className = "img-cell";
       td.textContent = cells[j] || '';
+      tr.appendChild(td);
     }
+    tbody.appendChild(tr);
   }
-  updateImgCellValidation();
 }
 
 // --- 選択肢削除ボタンの実装 ---
@@ -212,7 +242,6 @@ const delChoiceBtn = document.getElementById('delChoiceBtn');
 
 delChoiceBtn.onclick = () => {
   const theadTr = document.querySelector('#quizTable thead tr');
-  // 選択肢列のインデックスを取得
   let choiceStart = 3;
   let choiceEnd = choiceStart;
   while (theadTr.children[choiceEnd] && theadTr.children[choiceEnd].textContent.startsWith('選択肢')) {
@@ -223,8 +252,7 @@ delChoiceBtn.onclick = () => {
     alert('これ以上選択肢を消すことはできません');
     return;
   }
-  const delIdx = choiceEnd - 1; // 一番右の選択肢
-  // どこかに値が入っているかチェック
+  const delIdx = choiceEnd - 1;
   let hasValue = false;
   for (let row of table.rows) {
     if (row.cells[delIdx] && row.cells[delIdx].textContent.trim() !== '') {
@@ -235,7 +263,6 @@ delChoiceBtn.onclick = () => {
   if (hasValue) {
     if (!confirm('削除する選択肢列に値が入っています。本当に削除しますか？')) return;
   }
-  // 削除
   theadTr.removeChild(theadTr.children[delIdx]);
   for (let row of table.rows) {
     row.deleteCell(delIdx);
@@ -270,7 +297,7 @@ table.addEventListener('keydown', function(e) {
   if (!e.target.isContentEditable) return;
   const td = e.target;
   const tr = td.parentElement;
-  const rowIdx = tr.rowIndex - 1; // tbody内のindex
+  const rowIdx = tr.rowIndex - 1;
   const cellIdx = td.cellIndex;
   let nextCell = null;
   if (e.key === 'ArrowRight') {
@@ -286,7 +313,6 @@ table.addEventListener('keydown', function(e) {
     if (rowIdx < table.rows.length - 1) {
       nextCell = table.rows[rowIdx + 1].cells[cellIdx];
     } else {
-      // 一番下の行なら新しい行を追加
       const newRow = table.insertRow();
       for (let i = 0; i < table.rows[0].cells.length; i++) {
         const cell = newRow.insertCell();
@@ -299,7 +325,6 @@ table.addEventListener('keydown', function(e) {
   }
   if (nextCell) {
     nextCell.focus();
-    // キャレットを末尾に
     if (document.createRange) {
       const range = document.createRange();
       range.selectNodeContents(nextCell);
@@ -312,67 +337,7 @@ table.addEventListener('keydown', function(e) {
 });
 
 
-
-function saveToLocal() {
-  // テーブル内容
-  const ths = Array.from(document.querySelectorAll('#quizTable thead th')).map(th => th.textContent);
-  const rows = [];
-  for (let row of table.rows) {
-    rows.push(Array.from(row.cells).map(cell => cell.textContent));
-  }
-  // 画像ファイル名リスト
-  const images = {};
-  for (const [name, file] of Object.entries(imgFiles)) {
-    images[name] = file; // Fileは保存できないので後で
-  }
-  // 画像ファイル名のみ保存
-  const imageNames = Object.keys(imgFiles);
-
-  // localStorageへ保存
-  localStorage.setItem('quizTableHeaders', JSON.stringify(ths));
-  localStorage.setItem('quizTableRows', JSON.stringify(rows));
-  localStorage.setItem('quizImageNames', JSON.stringify(imageNames));
-}
-
-// テーブル編集時・画像追加時に保存
-table.addEventListener('input', saveToLocal);
-table.addEventListener('keydown', saveToLocal);
-document.getElementById('imgInput').addEventListener('change', saveToLocal);
-document.getElementById('addRowBtn').addEventListener('click', saveToLocal);
-document.getElementById('delRowBtn').addEventListener('click', saveToLocal);
-document.getElementById('addChoiceBtn').addEventListener('click', saveToLocal);
-document.getElementById('delChoiceBtn').addEventListener('click', saveToLocal);
-
-
-window.addEventListener('DOMContentLoaded', async () => {
-  // テーブル
-  const ths = JSON.parse(localStorage.getItem('quizTableHeaders') || 'null');
-  const rows = JSON.parse(localStorage.getItem('quizTableRows') || 'null');
-  const imageNames = JSON.parse(localStorage.getItem('quizImageNames') || 'null');
-  if (ths && rows) {
-    // ヘッダー復元
-    const theadTr = document.querySelector('#quizTable thead tr');
-    while (theadTr.children.length > ths.length) theadTr.removeChild(theadTr.lastChild);
-    while (theadTr.children.length < ths.length) {
-      const th = document.createElement('th');
-      th.textContent = `選択肢${theadTr.children.length - 3}`;
-      theadTr.insertBefore(th, theadTr.children[theadTr.children.length - 3]);
-    }
-    ths.forEach((h, i) => theadTr.children[i].textContent = h);
-
-    // 行復元
-    while (table.rows.length > 0) table.deleteRow(0);
-    for (let r of rows) {
-      const row = table.insertRow();
-      for (let j = 0; j < ths.length; j++) {
-        const td = row.insertCell();
-        td.contentEditable = "true";
-        if (j === 2) td.className = "img-cell";
-        td.textContent = r[j] || '';
-      }
-    }
-    updateImgCellValidation();
-  }
-  // 画像ファイル名リストは復元できるが、File本体はlocalStorageに保存できないため
-  // 画像は再アップロードが必要です（ファイル本体をIndexedDBで保存する場合は別途実装が必要）
+window.addEventListener('beforeunload', function(e) {
+  e.preventDefault();
+  e.returnValue = 'このページを離れると、現在のデータは失われます。本当に移動しますか？';
 });

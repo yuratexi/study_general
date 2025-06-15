@@ -5,11 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>資格試験対策クイズ</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="undertale.css">
 </head>
 
 <body>
+    <input type="checkbox" id="themeToggle" style="position: absolute; left: 0; top: 0; width: 10px; height: 10px; opacity: 0;" aria-hidden="true">
     <div class="main-content">
+        <div class="enemy-row">
+            <img id="enemy" src="./img/Flowey.png"/>
+            <div id="enemy_serif">バカだね！</div>
+        </div>
         <div id="question" class="question"></div>
         <div id="blanksArea"></div>
         <div id="answerBtnArea"></div>
@@ -23,6 +28,55 @@
     <div id="judgeOverlay"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
     <script src="quiz.js"></script>
+    <script>
+        // 2つのCSSファイルをlink要素で管理
+        const themeToggle = document.getElementById('themeToggle');
+
+        // ページ読み込み時に状態を復元
+        const savedTheme = localStorage.getItem('themeToggleChecked');
+        if (savedTheme === 'true') {
+        themeToggle.checked = true;
+        } else {
+        themeToggle.checked = false;
+        }
+
+        // 2つのCSSファイルをlink要素で管理
+        const undertaleCss = document.createElement('link');
+        undertaleCss.rel = 'stylesheet';
+        undertaleCss.href = 'undertale.css';
+        undertaleCss.disabled = true;
+        undertaleCss.id = 'undertaleTheme';
+
+        const normalCss = document.createElement('link');
+        normalCss.rel = 'stylesheet';
+        normalCss.href = 'style.css';
+        normalCss.disabled = true;
+        normalCss.id = 'normalTheme';
+
+        // 既存の<link rel="stylesheet" href="undertale.css">を削除
+        document.querySelectorAll('link[rel="stylesheet"]').forEach(link => link.remove());
+
+        // headに両方追加（disabledで切り替え）
+        document.head.appendChild(normalCss);
+        document.head.appendChild(undertaleCss);
+
+        // チェックボックスの状態でCSSを切り替え
+        function updateTheme() {
+        const checked = themeToggle.checked;
+        undertaleCss.disabled = !checked;
+        normalCss.disabled = checked;
+        if(document.getElementById('themeToggle').checked){
+            document.getElementById('enemy_serif').innerText = "ハロー！ボクはフラウィ。おはなのフラウィさ！";
+        }
+        // 状態を保存
+        localStorage.setItem('themeToggleChecked', checked ? 'true' : 'false');
+        }
+        themeToggle.addEventListener('change', updateTheme);
+
+        // 初期状態（localStorageの値でCSSを有効化）
+        updateTheme();
+    </script>
 </body>
+
 
 </html>
