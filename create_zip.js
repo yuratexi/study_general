@@ -149,6 +149,30 @@ document.getElementById('zipInput').addEventListener('change', async (e) => {
   updateImgCellValidation();
 });
 
+
+const csvUploadBtn = document.getElementById('csvUploadBtn');
+
+// 既存csvを読み込むボタンの機能追加
+function csv_import(){
+  console.log('CSV読み込みボタンがクリックされました');
+  // ファイル選択ダイアログを表示
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.csv,text/csv';
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    try {
+      const text = await file.text();
+      appendCsvToTable(text);
+      alert('CSVを読み込みました');
+    } catch (err) {
+      alert('CSVの読み込みに失敗しました');
+    }
+  };
+  input.click();
+};
+
 // CSV1行を安全に分割
 function parseCsvLine(line) {
   const cells = [];
@@ -292,6 +316,8 @@ delRowBtn.onclick = () => {
   updateImgCellValidation();
 };
 
+
+
 // --- セル移動（矢印キー・Enter） ---
 table.addEventListener('keydown', function(e) {
   if (!e.target.isContentEditable) return;
@@ -335,6 +361,8 @@ table.addEventListener('keydown', function(e) {
     }
   }
 });
+
+
 
 
 window.addEventListener('beforeunload', function(e) {
